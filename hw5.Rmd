@@ -121,6 +121,8 @@ arm_df =
     values_to = "observations") %>% 
   separate(time, into = c("omit", "week"), sep = "_") %>% 
   select(-omit)
+
+arm_df
 ```
 
 ### Make a spaghetti plot
@@ -142,5 +144,41 @@ arm_df %>%
 ### Summary on result
 
 From the plot above, we can see that generally the observation of experimental group is higher than control group. At the same time, the experimental line is increasing over time, while the control line is smooth, which means there are no big changes on observation over time.
+
+
+
+## Problem 3
+
+### Load the *iris* dataset
+
+```{r}
+set.seed(10)
+
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))
+```
+
+### Create function
+
+```{r}
+fill_missing = function(x) {
+  if (is.numeric(x)) {
+    replace_na(x, round(mean(x, na.rm = TRUE), digits = 1))}
+  else if (is.character(x)) {
+    replace_na(x, "virginica")}
+}
+```
+
+### Apply this function to fill missing values
+
+```{r}
+filled_iris = 
+  iris_with_missing %>% 
+  map_df(~fill_missing(.x))
+
+filled_iris
+```
+
 
 
